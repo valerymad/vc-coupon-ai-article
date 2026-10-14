@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="ru" data-resolution="square-4k">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=2160, height=2160" />
+    <title>Coupon AI — схемы к статье на VC</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* ---------- fonts (local, с кириллицей) ---------- */
+      @font-face { font-family: 'Manrope'; font-weight: 400; font-display: block;
+        src: url('assets/fonts/manrope-400-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'Manrope'; font-weight: 400; font-display: block;
+        src: url('assets/fonts/manrope-400-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'Manrope'; font-weight: 500; font-display: block;
+        src: url('assets/fonts/manrope-500-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'Manrope'; font-weight: 500; font-display: block;
+        src: url('assets/fonts/manrope-500-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'Manrope'; font-weight: 600; font-display: block;
+        src: url('assets/fonts/manrope-600-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'Manrope'; font-weight: 600; font-display: block;
+        src: url('assets/fonts/manrope-600-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'Manrope'; font-weight: 700; font-display: block;
+        src: url('assets/fonts/manrope-700-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'Manrope'; font-weight: 700; font-display: block;
+        src: url('assets/fonts/manrope-700-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'Manrope'; font-weight: 800; font-display: block;
+        src: url('assets/fonts/manrope-800-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'Manrope'; font-weight: 800; font-display: block;
+        src: url('assets/fonts/manrope-800-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'JBMono'; font-weight: 400; font-display: block;
+        src: url('assets/fonts/jbmono-400-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'JBMono'; font-weight: 400; font-display: block;
+        src: url('assets/fonts/jbmono-400-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'JBMono'; font-weight: 500; font-display: block;
+        src: url('assets/fonts/jbmono-500-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'JBMono'; font-weight: 500; font-display: block;
+        src: url('assets/fonts/jbmono-500-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'JBMono'; font-weight: 700; font-display: block;
+        src: url('assets/fonts/jbmono-700-cyrillic.woff2') format('woff2');
+        unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+      @font-face { font-family: 'JBMono'; font-weight: 700; font-display: block;
+        src: url('assets/fonts/jbmono-700-latin.woff2') format('woff2'); }
+
+      /* ---------- tokens (сняты с лендинга Coupon AI) ---------- */
+      :root {
+        --ink: #0b0b0f;
+        --grey: #6b7280;
+        --grey-lt: #7e8593;
+        --indigo: #495bf6;
+        --sky: #f5f9ff;
+        --sky2: #eef1fe;
+        --line: #e7eefb;
+        --dash: #c3cde6;
+        --red: #f03c41;
+        --red-bg: #fdecec;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 2160px; height: 2160px; overflow: hidden; background: #ffffff; }
+      body { font-family: 'Manrope', sans-serif; color: var(--ink); }
+
+      #root { position: relative; width: 2160px; height: 2160px; overflow: hidden; }
+
+      .card { position: absolute; inset: 0; }
+      .bg { position: absolute; inset: 0; background: #ffffff; border: 6px solid var(--line); }
+      .pad { position: absolute; inset: 130px; display: flex; flex-direction: column; gap: 54px; }
+
+      /* ---------- header / footer ---------- */
+      .eyebrow {
+        font-family: 'JBMono', monospace; font-weight: 700; font-size: 34px;
+        letter-spacing: 0.2em; text-transform: uppercase; color: var(--indigo);
+      }
+      .title { font-size: 108px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin-top: 20px; }
+      .sub { font-size: 48px; font-weight: 500; line-height: 1.34; color: var(--grey); margin-top: 24px; max-width: 1660px; }
+
+      .body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+      .note {
+        font-size: 34px; font-weight: 500; line-height: 1.45; color: var(--grey-lt);
+        border-top: 3px solid var(--line); padding-top: 30px; max-width: 1780px;
+      }
+      .brand { display: flex; align-items: center; justify-content: space-between; }
+      .brand img { height: 48px; width: auto; display: block; }
+      .brand .url {
+        font-family: 'JBMono', monospace; font-weight: 500; font-size: 30px;
+        color: var(--grey-lt); letter-spacing: 0.04em;
+      }
+
+      /* ================= C1 — каскад ================= */
+      .colhead {
+        font-family: 'JBMono', monospace; font-weight: 700; font-size: 26px;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-lt);
+        text-align: left; margin-left: 1462px; margin-bottom: 18px;
+      }
+      .steps { display: flex; flex-direction: column; gap: 30px; }
+      .step { display: flex; align-items: stretch; gap: 40px; height: 188px; }
+      .bar {
+        display: flex; align-items: center; gap: 30px;
+        padding: 0 42px; border-radius: 28px; background: var(--indigo); color: #fff; flex: 0 0 auto;
+      }
+      .step.hot .bar { background: var(--red); }
+      .bar .idx {
+        font-family: 'JBMono', monospace; font-weight: 700; font-size: 62px;
+        width: 74px; flex: 0 0 74px; text-align: center; color: rgba(255, 255, 255, 0.85);
+      }
+      .bar .nm { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+      .bar .nm b { font-size: 56px; font-weight: 700; line-height: 1.1; white-space: nowrap; }
+      .bar .nm i {
+        font-style: normal; font-size: 34px; font-weight: 500; line-height: 1.1;
+        color: rgba(255, 255, 255, 0.9); white-space: nowrap;
+      }
+      .cost {
+        width: 430px; flex: 0 0 430px; display: flex; flex-direction: column;
+        align-items: flex-start; justify-content: center; gap: 10px;
+      }
+      .cost b { font-family: 'JBMono', monospace; font-weight: 700; font-size: 60px; color: var(--grey); line-height: 1; }
+      .cost span { font-size: 32px; font-weight: 600; color: var(--grey-lt); }
+      .step.hot .cost b, .step.hot .cost span { color: var(--red); }
+
+      /* ================= C2 — было/стало ================= */
+      .tbl { display: flex; flex-direction: column; }
+      .trow { display: flex; align-items: center; gap: 40px; padding: 44px 0; border-bottom: 3px solid var(--line); }
+      .trow:last-child { border-bottom: none; }
+      .trow.thead { padding-top: 0; padding-bottom: 28px; }
+      .tlabel { width: 660px; flex: 0 0 660px; }
+      .tlabel b { display: block; font-size: 50px; font-weight: 600; line-height: 1.18; }
+      .tlabel i { font-style: normal; display: block; font-size: 32px; font-weight: 500; color: var(--grey-lt); margin-top: 10px; }
+      .tcell { width: 540px; flex: 0 0 540px; }
+      .tcell.wide { width: 620px; flex: 0 0 620px; }
+      .tcell .v { font-size: 62px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; }
+      .tcell .v.m { font-family: 'JBMono', monospace; font-weight: 700; letter-spacing: 0; }
+      .tcell .s { font-size: 30px; font-weight: 500; color: var(--grey-lt); margin-top: 12px; line-height: 1.28; }
+      .tcell.was .v { color: var(--red); }
+      .tcell.now .v { color: var(--indigo); }
+      .thead .cap {
+        font-family: 'JBMono', monospace; font-weight: 700; font-size: 32px;
+        letter-spacing: 0.18em; text-transform: uppercase;
+      }
+      .thead .was .cap { color: var(--red); }
+      .thead .now .cap { color: var(--indigo); }
+      .thead .capsub { font-size: 30px; font-weight: 500; color: var(--grey-lt); margin-top: 12px; }
+
+      /* ================= C3 — дорожки ================= */
+      .lanes { position: relative; display: grid; grid-template-columns: 1040px 200px 620px; }
+      .lanehead {
+        font-family: 'JBMono', monospace; font-weight: 700; font-size: 30px;
+        letter-spacing: 0.2em; text-transform: uppercase; padding-bottom: 22px;
+      }
+      .lanehead.code { color: var(--indigo); }
+      .lanehead.ai { color: var(--grey); }
+      .fence { position: absolute; top: 52px; bottom: 0; left: 1140px; width: 0; border-left: 5px dashed var(--dash); }
+      .stepsc { display: flex; flex-direction: column; gap: 24px; }
+      .srow {
+        display: flex; align-items: center; gap: 28px; height: 156px;
+        background: var(--sky); border-radius: 22px; padding: 0 36px;
+      }
+      .srow .n { font-family: 'JBMono', monospace; font-weight: 700; font-size: 34px; color: var(--indigo); flex: 0 0 60px; }
+      .srow .t { font-size: 44px; font-weight: 600; line-height: 1.22; }
+      .conns { display: flex; flex-direction: column; gap: 24px; }
+      .conn { height: 156px; display: flex; align-items: center; justify-content: center; }
+      .conn.blank { visibility: hidden; }
+      .aipanel {
+        grid-column: 3; grid-row: 2; align-self: stretch;
+        background: var(--ink); border-radius: 30px; padding: 44px 40px;
+        display: flex; flex-direction: column; gap: 26px;
+      }
+      .aipanel .h { font-family: 'JBMono', monospace; font-weight: 700; font-size: 64px; color: #fff; letter-spacing: 0.06em; }
+      .aipanel .d { font-size: 34px; font-weight: 500; color: rgba(255, 255, 255, 0.75); line-height: 1.3; }
+      .quote {
+        background: rgba(255, 255, 255, 0.1); border-left: 6px solid var(--indigo);
+        border-radius: 14px; padding: 26px 24px;
+        font-family: 'JBMono', monospace; font-weight: 500; font-size: 32px; color: #fff; line-height: 1.45;
+      }
+      .nolist {
+        margin-top: auto; padding-top: 30px; border-top: 3px solid rgba(255, 255, 255, 0.16);
+        display: flex; flex-direction: column; gap: 16px;
+      }
+      .nolist div {
+        font-family: 'JBMono', monospace; font-weight: 700; font-size: 32px;
+        color: #ff9a9d; letter-spacing: 0.02em;
+      }
+      .strip {
+        margin-top: 48px; background: var(--red-bg); border-radius: 24px; padding: 36px 40px;
+        font-size: 40px; font-weight: 600; line-height: 1.32; color: #8c1f22;
+      }
+
+      /* ================= C4 — контекст ================= */
+      .ctx { display: flex; gap: 80px; align-items: stretch; }
+      .junkcard {
+        width: 660px; flex: 0 0 660px; background: var(--sky2); border: 4px solid var(--line);
+        border-radius: 26px; padding: 44px 44px 40px;
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      .junkcard .jt {
+        font-family: 'JBMono', monospace; font-weight: 700; font-size: 28px;
+        letter-spacing: 0.18em; text-transform: uppercase; color: var(--grey-lt);
+      }
+      .junkcard .ji { font-size: 42px; font-weight: 500; color: var(--grey); line-height: 1.2; }
+      .junkcard .jn { font-size: 32px; font-weight: 600; color: var(--grey-lt); line-height: 1.3; }
+
+      .funnelwrap { flex: 1; position: relative; }
+      .fl-top .n { font-size: 88px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+      .fl-top .c { font-size: 38px; font-weight: 500; line-height: 1.3; color: var(--grey); margin-top: 18px; max-width: 780px; }
+      .funnel {
+        width: 620px; height: 700px; margin-top: 34px;
+        clip-path: polygon(0 0, 620px 0, 60px 700px, 0 700px);
+        background: linear-gradient(180deg, #dde3f3 0%, #c3cde8 62%, #a9b6df 100%);
+      }
+      .cone {
+        width: 60px; height: 56px; margin-top: 14px;
+        clip-path: polygon(0 0, 60px 0, 30px 56px, 0 56px);
+        background: var(--indigo);
+      }
+      .fl-mid { position: absolute; left: 400px; top: 672px; font-size: 44px; font-weight: 700; color: var(--red); line-height: 1.2; }
+      .fl-bot { position: absolute; left: 210px; bottom: 0; }
+      .fl-link { position: absolute; left: 68px; bottom: 26px; width: 126px; height: 0; border-top: 5px dashed var(--dash); }
+      .fl-bot .n { font-size: 88px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--indigo); }
+      .fl-bot .c { font-size: 38px; font-weight: 500; line-height: 1.3; color: var(--ink); margin-top: 18px; max-width: 720px; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="13"
+      data-width="2160"
+      data-height="2160"
+    >
+      <!-- =============== СХЕМА 1 — каскад пяти уровней =============== -->
+      <div id="c1" class="card clip" data-start="0" data-duration="3" data-track-index="1">
+        <div class="bg"></div>
+        <div class="pad">
+          <div class="head" id="c1h">
+            <div class="eyebrow">Каскад исполнения</div>
+            <h2 class="title">Пять уровней исполнения</h2>
+            <div class="sub">
+              От самого дешёвого и предсказуемого к самому дорогому.
+              ИИ&#160;включается последним.
+            </div>
+          </div>
+
+          <div class="body">
+            <div class="colhead">Стоимость обработки</div>
+            <div class="steps">
+              <div class="step c1row">
+                <div class="bar" style="width: 1420px">
+                  <span class="idx">1</span>
+                  <span class="nm"><b>Готовый сценарий магазина</b><i>255 крупных магазинов, написаны руками</i></span>
+                </div>
+                <div class="cost"><b>0&#162;</b><span>без ИИ</span></div>
+              </div>
+              <div class="step c1row">
+                <div class="bar" style="width: 1220px">
+                  <span class="idx">2</span>
+                  <span class="nm"><b>Известные координаты</b><i>поле, кнопка, итоговая сумма</i></span>
+                </div>
+                <div class="cost"><b>0&#162;</b><span>без ИИ</span></div>
+              </div>
+              <div class="step c1row">
+                <div class="bar" style="width: 1020px">
+                  <span class="idx">3</span>
+                  <span class="nm"><b>Тип платформы</b><i>Shopify, Magento, WooCommerce</i></span>
+                </div>
+                <div class="cost"><b>0&#162;</b><span>без ИИ</span></div>
+              </div>
+              <div class="step c1row">
+                <div class="bar" style="width: 820px">
+                  <span class="idx">4</span>
+                  <span class="nm"><b>Память по домену</b><i>разобрали один раз</i></span>
+                </div>
+                <div class="cost"><b>0&#162;</b><span>без ИИ</span></div>
+              </div>
+              <div class="step c1row hot">
+                <div class="bar" style="width: 620px">
+                  <span class="idx">5</span>
+                  <span class="nm"><b>Запрос к ИИ</b><i>единичные случаи</i></span>
+                </div>
+                <div class="cost"><b>&lt;0,5&#162;</b><span>здесь работает ИИ</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="note">
+            Ширина ступени показывает долю обработок. Пропорции условные. Первые четыре уровня
+            закрывают подавляющее большинство корзин условно&#8209;бесплатно.
+          </div>
+          <!-- брендинг снят под правила VC (реклама коммерческих сервисов и ссылок).
+               Вернуть для нейтральных площадок: раскомментировать.
+          <div class="brand">
+            <img src="assets/LOGO-CCDEV.png" alt="Cupcake Development" />
+            <div class="url">Coupon AI &#183; coupons.cupcakedev.com</div>
+          </div>
+          -->
+        </div>
+      </div>
+
+      <!-- =============== СХЕМА 2 — было / стало =============== -->
+      <div id="c2" class="card clip" data-start="3.2" data-duration="3" data-track-index="2">
+        <div class="bg"></div>
+        <div class="pad">
+          <div class="head" id="c2h">
+            <div class="eyebrow">Переписали с нуля</div>
+            <h2 class="title">Что изменилось в цифрах</h2>
+            <div class="sub">
+              Первая версия отдавала ИИ полный контроль над браузером. Вторая оставила ему
+              один&#160;вопрос.
+            </div>
+          </div>
+
+          <div class="body">
+            <div class="tbl">
+              <div class="trow thead">
+                <div class="tlabel"></div>
+                <div class="tcell was">
+                  <div class="cap">Было</div>
+                  <div class="capsub">версия 1, полный контроль GPT</div>
+                </div>
+                <div class="tcell now wide">
+                  <div class="cap">Стало</div>
+                  <div class="capsub">сейчас</div>
+                </div>
+              </div>
+
+              <div class="trow c2row">
+                <div class="tlabel"><b>Обработка одной корзины</b></div>
+                <div class="tcell was"><div class="v m">7&#8209;10&#162;</div></div>
+                <div class="tcell now wide">
+                  <div class="v m">&lt;0,5&#162;</div>
+                  <div class="s">на знакомых магазинах ноль</div>
+                </div>
+              </div>
+
+              <div class="trow c2row">
+                <div class="tlabel"><b>Время прогона</b></div>
+                <div class="tcell was"><div class="v">2&#8209;3 мин</div></div>
+                <div class="tcell now wide">
+                  <div class="v">около минуты</div>
+                  <div class="s">и уходит она на сам перебор кодов</div>
+                </div>
+              </div>
+
+              <div class="trow c2row">
+                <div class="tlabel">
+                  <b>Технический успех</b><i>промокод попал туда, куда нужно</i>
+                </div>
+                <div class="tcell was"><div class="v m">&lt;40%</div></div>
+                <div class="tcell now wide"><div class="v m">&gt;90%</div></div>
+              </div>
+
+              <div class="trow c2row">
+                <div class="tlabel"><b>Контекст в модель</b><i>страница корзины уходила целиком</i></div>
+                <div class="tcell was">
+                  <div class="v">125&#8209;500 тыс.</div>
+                  <div class="s">токенов на страницу</div>
+                </div>
+                <div class="tcell now wide">
+                  <div class="v">6 тыс.</div>
+                  <div class="s">токенов после чистки</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="note">
+            Скидку в итоге дают 50&#8209;60&#160;% применений: большая часть промокодов в интернете
+            мертва, истекла или не подходит к корзине. Это от нас не зависит, а вот попадание кода
+            в нужное поле зависит целиком.
+          </div>
+          <!-- брендинг снят под правила VC (реклама коммерческих сервисов и ссылок).
+               Вернуть для нейтральных площадок: раскомментировать.
+          <div class="brand">
+            <img src="assets/LOGO-CCDEV.png" alt="Cupcake Development" />
+            <div class="url">Coupon AI &#183; coupons.cupcakedev.com</div>
+          </div>
+          -->
+        </div>
+      </div>
+
+      <!-- =============== СХЕМА 3 — кто чем управляет =============== -->
+      <div id="c3" class="card clip" data-start="6.4" data-duration="3" data-track-index="3">
+        <div class="bg"></div>
+        <div class="pad">
+          <div class="head" id="c3h">
+            <div class="eyebrow">Граница ответственности</div>
+            <h2 class="title">Кто чем управляет</h2>
+            <div class="sub">
+              ИИ отвечает на один вопрос: где на этой странице нужные элементы.
+              Браузером владеет код.
+            </div>
+          </div>
+
+          <div class="body">
+            <div class="lanes">
+              <div class="fence"></div>
+
+              <div class="lanehead code" style="grid-column: 1; grid-row: 1">Код</div>
+              <div style="grid-column: 2; grid-row: 1"></div>
+              <div class="lanehead ai" style="grid-column: 3; grid-row: 1; padding-left: 40px">ИИ</div>
+
+              <div class="stepsc" style="grid-column: 1; grid-row: 2">
+                <div class="srow c3row"><div class="n">01</div><div class="t">Читает страницу магазина</div></div>
+                <div class="srow c3row"><div class="n">02</div><div class="t">Чистит контекст, выбрасывает мусор</div></div>
+                <div class="srow c3row"><div class="n">03</div><div class="t">Отправляет запрос</div></div>
+                <div class="srow c3row"><div class="n">04</div><div class="t">Проверяет ответ: целый, элементы есть, похоже на правду</div></div>
+                <div class="srow c3row"><div class="n">05</div><div class="t">Кликает, вводит код, сверяет цену</div></div>
+              </div>
+
+              <div class="conns" style="grid-column: 2; grid-row: 2">
+                <div class="conn blank"></div>
+                <div class="conn blank"></div>
+                <div class="conn" id="arrow-out">
+                  <svg width="180" height="34" viewBox="0 0 180 34" aria-hidden="true">
+                    <path d="M2 17 H148" stroke="#495bf6" stroke-width="5" stroke-dasharray="15 13" stroke-linecap="round" />
+                    <path d="M143 6 L167 17 L143 28" fill="none" stroke="#495bf6" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <div class="conn" id="arrow-in">
+                  <svg width="180" height="34" viewBox="0 0 180 34" aria-hidden="true">
+                    <path d="M178 17 H32" stroke="#6b7280" stroke-width="5" stroke-dasharray="15 13" stroke-linecap="round" />
+                    <path d="M37 6 L13 17 L37 28" fill="none" stroke="#6b7280" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <div class="conn blank"></div>
+              </div>
+
+              <div class="aipanel" id="c3ai">
+                <div class="h">ИИ</div>
+                <div class="d">Видит только очищенную разметку и возвращает ориентиры:</div>
+                <div class="quote">
+                  <div>поле тут,</div>
+                  <div>кнопка там,</div>
+                  <div>сумма здесь</div>
+                </div>
+                <div class="nolist">
+                  <div>клика нет</div>
+                  <div>ввода нет</div>
+                  <div>кнопки покупки нет</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="strip" id="c3strip">
+              Поэтому prompt injection упирается в архитектуру: даже если чужая страница просочит
+              инструкцию, исполнять её физически некому.
+            </div>
+          </div>
+
+          <!-- брендинг снят под правила VC (реклама коммерческих сервисов и ссылок).
+               Вернуть для нейтральных площадок: раскомментировать.
+          <div class="brand">
+            <img src="assets/LOGO-CCDEV.png" alt="Cupcake Development" />
+            <div class="url">Coupon AI &#183; coupons.cupcakedev.com</div>
+          </div>
+          -->
+        </div>
+      </div>
+
+      <!-- =============== СХЕМА 4 — чистка контекста =============== -->
+      <div id="c4" class="card clip" data-start="9.6" data-duration="3" data-track-index="4">
+        <div class="bg"></div>
+        <div class="pad">
+          <div class="head" id="c4h">
+            <div class="eyebrow">Чистка контекста</div>
+            <h2 class="title">За что мы платили зря</h2>
+            <div class="sub">
+              Страница корзины уходила в модель почти целиком, хотя нужна ей только структура.
+            </div>
+          </div>
+
+          <div class="body">
+            <div class="ctx">
+              <div class="junkcard" id="c4bar">
+                <div class="jt">Улетает при чистке</div>
+                <div class="ji">скрипты и стили</div>
+                <div class="ji">картинки и иконки</div>
+                <div class="ji">скрытые блоки, которых не видно</div>
+                <div class="ji">описания товаров и отзывы</div>
+                <div class="ji">юридические простыни</div>
+                <div class="ji">технический мусор сборки</div>
+                <div class="jn">Всё это мы оплачивали и этим же сбивали модель</div>
+              </div>
+
+              <div class="funnelwrap">
+                <div class="fl-top" id="c4a">
+                  <div class="n">125&#8209;500 тыс.</div>
+                  <div class="c">токенов уходило в модель со средней страницы корзины</div>
+                </div>
+                <div class="funnel" id="c4f"></div>
+                <div class="cone" id="c4c"></div>
+                <div class="fl-link"></div>
+                <div class="fl-mid" id="c4m">в 20&#8209;80 раз меньше</div>
+                <div class="fl-bot" id="c4b">
+                  <div class="n">6 тыс.</div>
+                  <div class="c">токенов остаётся: поле, кнопка, сумма и всё, что на неё влияет</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="note">
+            Сужение воронки дано в масштабе по нижней границе диапазона: 6 тысяч токенов против
+            125 тысяч. Стоимость запроса к модели упала до 0,12 цента, а качество ответов выросло:
+            меньше мусора в контексте, реже модель цепляется не за то.
+          </div>
+          <!-- брендинг снят под правила VC (реклама коммерческих сервисов и ссылок).
+               Вернуть для нейтральных площадок: раскомментировать.
+          <div class="brand">
+            <img src="assets/LOGO-CCDEV.png" alt="Cupcake Development" />
+            <div class="url">Coupon AI &#183; coupons.cupcakedev.com</div>
+          </div>
+          -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      // ---- С1: каскад ----
+      tl.from('#c1h', { opacity: 0, y: 40, duration: 0.55, ease: 'power3.out' }, 0.05);
+      tl.from('#c1 .c1row', { opacity: 0, x: -60, duration: 0.5, stagger: 0.11, ease: 'power3.out' }, 0.3);
+
+      // ---- С2: было/стало ----
+      tl.from('#c2h', { opacity: 0, y: 40, duration: 0.55, ease: 'power3.out' }, 3.25);
+      tl.from('#c2 .thead', { opacity: 0, duration: 0.4, ease: 'power2.out' }, 3.5);
+      tl.from('#c2 .c2row', { opacity: 0, y: 34, duration: 0.5, stagger: 0.12, ease: 'power3.out' }, 3.6);
+
+      // ---- С3: дорожки ----
+      tl.from('#c3h', { opacity: 0, y: 40, duration: 0.55, ease: 'power3.out' }, 6.45);
+      tl.from('#c3 .c3row', { opacity: 0, x: -50, duration: 0.45, stagger: 0.1, ease: 'power3.out' }, 6.7);
+      tl.from('#c3ai', { opacity: 0, x: 50, duration: 0.55, ease: 'power3.out' }, 6.95);
+      tl.from(['#arrow-out', '#arrow-in'], { opacity: 0, duration: 0.4, stagger: 0.14, ease: 'power2.out' }, 7.4);
+      tl.from('#c3strip', { opacity: 0, y: 26, duration: 0.5, ease: 'power3.out' }, 7.7);
+
+      // ---- С4: контекст ----
+      tl.from('#c4h', { opacity: 0, y: 40, duration: 0.55, ease: 'power3.out' }, 9.65);
+      tl.from('#c4bar', { opacity: 0, y: 40, duration: 0.6, ease: 'power3.out' }, 9.9);
+      tl.from('#c4a', { opacity: 0, x: 50, duration: 0.5, ease: 'power3.out' }, 10.1);
+      tl.from('#c4f', { opacity: 0, scaleY: 0.84, transformOrigin: 'top center', duration: 0.6, ease: 'power3.out' }, 10.2);
+      tl.from('#c4c', { opacity: 0, duration: 0.35, ease: 'power2.out' }, 10.7);
+      tl.from('#c4m', { opacity: 0, duration: 0.4, ease: 'power2.out' }, 10.35);
+      tl.from('#c4b', { opacity: 0, x: 50, duration: 0.5, ease: 'power3.out' }, 10.5);
+
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>

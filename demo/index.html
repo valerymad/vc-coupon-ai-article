@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Coupon AI — демо расширения в корзине</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: 'PJS'; font-weight: 400; font-display: block; src: url('assets/fonts/pjs-400-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'PJS'; font-weight: 500; font-display: block; src: url('assets/fonts/pjs-500-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'PJS'; font-weight: 600; font-display: block; src: url('assets/fonts/pjs-600-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'PJS'; font-weight: 700; font-display: block; src: url('assets/fonts/pjs-700-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'PJS'; font-weight: 800; font-display: block; src: url('assets/fonts/pjs-800-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'JBMono'; font-weight: 400; font-display: block; src: url('assets/fonts/jbmono-400-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'JBMono'; font-weight: 500; font-display: block; src: url('assets/fonts/jbmono-500-latin.woff2') format('woff2'); }
+      @font-face { font-family: 'JBMono'; font-weight: 700; font-display: block; src: url('assets/fonts/jbmono-700-latin.woff2') format('woff2'); }
+
+      :root {
+        --ink: #0b0b0f;
+        --grey: #5f6674;
+        --grey-lt: #7e8593;
+        --indigo: #495bf6;
+        --sky: #f5f9ff;
+        --sky2: #eef1fe;
+        --line: #e6eaf2;
+        --line2: #eef1f6;
+        --ok: #15803d;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #eef2fa; }
+      body { font-family: 'PJS', sans-serif; color: var(--ink); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+      .scene { position: absolute; inset: 0; }
+      .page-bg { position: absolute; inset: 0; background: #eef2fa; }
+
+      /* ---------------- окно браузера ---------------- */
+      .win {
+        position: absolute; left: 80px; top: 56px; width: 1760px; height: 968px;
+        background: #ffffff; border-radius: 22px; overflow: hidden;
+        box-shadow: 0 44px 100px rgba(11, 11, 15, 0.16);
+      }
+      .chrome { position: absolute; left: 0; top: 0; width: 1760px; height: 84px; background: #f4f6fa; border-bottom: 2px solid var(--line); }
+      .dots { position: absolute; left: 28px; top: 34px; display: flex; gap: 12px; }
+      .dots i { display: block; width: 16px; height: 16px; border-radius: 50%; }
+      .tab {
+        position: absolute; left: 116px; top: 24px; width: 320px; height: 60px;
+        background: #ffffff; border-radius: 12px 12px 0 0; border: 2px solid var(--line); border-bottom: none;
+        display: flex; align-items: center; gap: 14px; padding: 0 20px;
+        font-size: 22px; font-weight: 600; color: var(--grey);
+      }
+      .tab i { display: block; width: 20px; height: 20px; border-radius: 5px; background: var(--ink); flex: 0 0 20px; }
+      .url {
+        position: absolute; left: 480px; top: 18px; width: 640px; height: 48px;
+        background: #ffffff; border: 2px solid var(--line); border-radius: 24px;
+        display: flex; align-items: center; gap: 14px; padding: 0 22px;
+        font-family: 'JBMono', monospace; font-size: 22px; font-weight: 400; color: var(--grey);
+      }
+      .lock { width: 18px; height: 20px; flex: 0 0 18px; }
+      .exts { position: absolute; right: 30px; top: 16px; display: flex; align-items: center; gap: 18px; }
+      .exts .g { display: block; width: 34px; height: 34px; border-radius: 50%; background: #dfe4ee; }
+      .extbtn { display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 14px; background: #ffffff; border: 2px solid var(--line); }
+
+      .view { position: absolute; left: 0; top: 84px; width: 1760px; height: 884px; background: #ffffff; }
+
+      /* ---------------- шапка магазина ---------------- */
+      .shop { position: absolute; left: 0; top: 0; width: 1760px; height: 78px; border-bottom: 2px solid var(--line2); display: flex; align-items: center; padding: 0 44px; gap: 46px; }
+      .brand { font-size: 32px; font-weight: 800; letter-spacing: 0.14em; }
+      .nav { display: flex; gap: 34px; font-size: 24px; font-weight: 500; color: var(--grey); }
+      .search { width: 320px; height: 46px; border-radius: 23px; background: #f4f6fa; border: 2px solid var(--line2); display: flex; align-items: center; padding: 0 20px; font-size: 22px; font-weight: 500; color: var(--grey); }
+
+      /* ---------------- корзина ---------------- */
+      .items { position: absolute; left: 44px; top: 118px; width: 660px; }
+      .h-cart { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; }
+      .item { display: flex; align-items: center; gap: 24px; margin-top: 30px; }
+      .thumb { width: 104px; height: 104px; border-radius: 18px; background: #eef1f6; flex: 0 0 104px; }
+      .item .txt { flex: 1; }
+      .item .n { display: block; font-size: 29px; font-weight: 600; line-height: 1.25; }
+      .item .q { display: block; font-size: 23px; font-weight: 500; color: var(--grey); margin-top: 8px; }
+      .item .p { font-family: 'JBMono', monospace; font-size: 30px; font-weight: 700; }
+      .trust { margin-top: 40px; padding-top: 26px; border-top: 2px solid var(--line2); font-size: 23px; font-weight: 500; color: var(--grey); line-height: 1.5; }
+      .trust b { display: block; font-weight: 700; color: var(--ink); margin-bottom: 6px; font-size: 24px; }
+
+      /* ---------------- сводка заказа ---------------- */
+      .sum { position: absolute; left: 744px; top: 118px; width: 500px; background: var(--sky); border: 2px solid #e9eef9; border-radius: 20px; padding: 30px 30px 32px; }
+      .sum h3 { font-size: 28px; font-weight: 700; margin-bottom: 22px; }
+      .srow { display: flex; align-items: baseline; justify-content: space-between; font-size: 26px; font-weight: 500; color: var(--grey); margin-bottom: 14px; }
+      .srow b { font-family: 'JBMono', monospace; font-size: 26px; font-weight: 500; color: var(--ink); }
+      .promo { display: flex; gap: 12px; margin-top: 22px; }
+      .field { position: relative; flex: 1; height: 62px; background: #ffffff; border: 2px solid #dfe6f3; border-radius: 13px; overflow: hidden; }
+      .field .ph, .field .code { position: absolute; left: 18px; top: 0; height: 100%; display: flex; align-items: center; }
+      .field .ph { font-size: 24px; font-weight: 500; color: #8d94a3; }
+      .field .code { font-family: 'JBMono', monospace; font-size: 25px; font-weight: 700; color: var(--ink); visibility: hidden; opacity: 0; }
+      .applybtn { width: 118px; height: 62px; border-radius: 13px; background: #e4e9f4; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: var(--grey); }
+      .status { position: relative; height: 36px; margin-top: 14px; }
+      .status span { position: absolute; left: 2px; top: 0; font-size: 23px; font-weight: 600; visibility: hidden; opacity: 0; }
+      .st-bad { color: var(--grey); }
+      .st-ok { color: var(--ink); }
+      .st-best { color: var(--indigo); }
+      .hr { height: 2px; background: #e2e9f6; margin: 22px 0; }
+      .totrow { display: flex; align-items: center; justify-content: space-between; }
+      .totrow .l { font-size: 32px; font-weight: 700; }
+      .totrow .v { font-family: 'JBMono', monospace; font-size: 54px; font-weight: 700; letter-spacing: -0.02em; }
+      .saved { display: inline-flex; align-items: center; height: 44px; padding: 0 18px; border-radius: 11px; background: #e7f6ec; color: var(--ok); font-size: 24px; font-weight: 700; margin-top: 16px; visibility: hidden; opacity: 0; }
+      .checkout { margin-top: 24px; height: 72px; border-radius: 15px; background: var(--ink); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; font-weight: 700; }
+
+      /* ---------------- панель расширения ---------------- */
+      .panel { position: absolute; left: 1284px; top: 12px; width: 440px; background: #ffffff; border: 2px solid #eef1f8; border-radius: 24px; padding: 26px 26px 28px; box-shadow: 0 34px 76px rgba(11, 11, 15, 0.2); }
+      .beak { position: absolute; right: 76px; top: -11px; width: 22px; height: 22px; background: #ffffff; border-left: 2px solid #eef1f8; border-top: 2px solid #eef1f8; border-radius: 4px; transform: rotate(45deg); }
+      .phead { display: flex; align-items: center; gap: 12px; height: 32px; }
+      .phead .t { font-size: 27px; font-weight: 800; letter-spacing: -0.01em; }
+      .phead .t em { font-style: normal; color: var(--indigo); }
+      .pstate { position: relative; height: 356px; margin-top: 20px; }
+      .st { position: absolute; left: 0; top: 0; width: 388px; height: 356px; }
+      .lbl { font-size: 22px; font-weight: 600; color: var(--grey); letter-spacing: 0.02em; }
+      .big { font-size: 50px; font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; margin-top: 12px; }
+      .big em { font-style: normal; color: var(--indigo); }
+      .body-t { font-size: 24px; font-weight: 500; line-height: 1.38; color: var(--grey); margin-top: 16px; }
+      .cta { position: absolute; left: 0; bottom: 0; width: 388px; height: 76px; border-radius: 17px; background: linear-gradient(135deg, #5b5bf5 0%, #4038d8 100%); display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 29px; font-weight: 700; }
+      .chipwrap { position: relative; height: 66px; margin-top: 24px; }
+      .chip { position: absolute; left: 0; top: 0; height: 66px; padding: 0 26px; border-radius: 16px; background: var(--sky2); display: flex; align-items: center; font-family: 'JBMono', monospace; font-size: 30px; font-weight: 700; color: var(--indigo); visibility: hidden; opacity: 0; }
+      .prog { position: absolute; left: 0; bottom: 0; width: 388px; }
+      .progrow { display: flex; align-items: baseline; justify-content: space-between; font-size: 24px; font-weight: 500; color: var(--grey); margin-bottom: 14px; }
+      .progrow b { font-weight: 700; color: var(--ink); }
+      .track { height: 12px; border-radius: 6px; background: #e9edf7; overflow: hidden; }
+      .fill { display: block; width: 388px; height: 12px; border-radius: 6px; background: var(--indigo); transform-origin: left center; transform: scaleX(0.08); }
+      .kvs { margin-top: 26px; }
+      .kv { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+      .kv .k { font-size: 26px; font-weight: 500; color: var(--grey); }
+      .kv .v { font-family: 'JBMono', monospace; font-size: 30px; font-weight: 700; }
+      .kv .v.i { color: var(--indigo); }
+      .st2, .st3 { visibility: hidden; opacity: 0; }
+
+      /* ---------------- курсор и затемнение ---------------- */
+      .cursor { position: absolute; left: 1560px; top: 940px; width: 46px; height: 61px; }
+      .fade { position: absolute; inset: 0; background: #ffffff; opacity: 0; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="14"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="scene" class="scene clip" data-start="0" data-duration="14" data-track-index="1">
+        <div class="page-bg"></div>
+
+        <div class="win">
+          <div class="chrome">
+            <div class="dots"><i style="background: #ff5f57"></i><i style="background: #febc2e"></i><i style="background: #28c840"></i></div>
+            <div class="tab"><i></i>Cart · NORTHLY</div>
+            <div class="url">
+              <svg class="lock" viewBox="0 0 18 20" aria-hidden="true">
+                <path d="M4 8V6a5 5 0 0 1 10 0v2" stroke="#5f6674" stroke-width="2" fill="none" stroke-linecap="round" />
+                <rect x="2" y="8" width="14" height="11" rx="2.5" fill="#5f6674" />
+              </svg>
+              northly.store/cart
+            </div>
+            <div class="exts">
+              <span class="g"></span><span class="g"></span>
+              <span class="extbtn" id="extbtn">
+                <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                  <path d="M6 10.5h17l-1.8 16.2a3 3 0 0 1-3 2.65H10.8a3 3 0 0 1-3-2.65L6 10.5Z" stroke="#0b0b0f" stroke-width="2" stroke-linejoin="round" />
+                  <path d="M11.5 10.5V8.2A4.2 4.2 0 0 1 15.7 4a4.2 4.2 0 0 1 4.2 4.2v2.3" stroke="#0b0b0f" stroke-width="2" stroke-linecap="round" />
+                  <rect x="14" y="17" width="7.2" height="7.2" rx="1.4" fill="#495BF6" />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div class="view">
+            <div class="shop">
+              <div class="brand">NORTHLY</div>
+              <div class="nav"><span>Shop</span><span>New in</span><span>Sale</span></div>
+              <div class="search">Search NORTHLY</div>
+            </div>
+
+            <div class="items">
+              <div class="h-cart">Your cart</div>
+              <div class="item">
+                <span class="thumb"></span>
+                <span class="txt"><span class="n">Urban Explorer Backpack</span><span class="q">Qty 1 · Slate</span></span>
+                <span class="p">$79.90</span>
+              </div>
+              <div class="item">
+                <span class="thumb"></span>
+                <span class="txt"><span class="n">Merino Wool Beanie</span><span class="q">Qty 1 · Charcoal</span></span>
+                <span class="p">$34.50</span>
+              </div>
+              <div class="item">
+                <span class="thumb"></span>
+                <span class="txt"><span class="n">Trail Running Socks, 2-pack</span><span class="q">Qty 1 · Grey melange</span></span>
+                <span class="p">$15.00</span>
+              </div>
+              <div class="trust">
+                <b>Free shipping over $75</b>
+                Free returns within 30 days. Orders placed before 14:00 ship the same day.
+              </div>
+            </div>
+
+            <div class="sum">
+              <h3>Order summary</h3>
+              <div class="srow">Subtotal <b>$129.40</b></div>
+              <div class="srow">Shipping <b>Free</b></div>
+
+              <div class="promo">
+                <span class="field">
+                  <span class="ph" id="ph">Promo code</span>
+                  <span class="code" id="fcode-0">SAVE10</span>
+                  <span class="code" id="fcode-1">CODE7</span>
+                  <span class="code" id="fcode-2">FRESH22</span>
+                  <span class="code" id="fcode-3">FALL26</span>
+                  <span class="code" id="fcode-4">BACK26</span>
+                  <span class="code" id="fcode-5">MEMBER15</span>
+                </span>
+                <span class="applybtn">Apply</span>
+              </div>
+
+              <div class="status">
+                <span class="st-bad" id="fst-0">invalid code</span>
+                <span class="st-ok" id="fst-1">applied &#8722;$8.20</span>
+                <span class="st-bad" id="fst-2">expired last week</span>
+                <span class="st-ok" id="fst-3">applied &#8722;$18.40</span>
+                <span class="st-bad" id="fst-4">not eligible for this cart</span>
+                <span class="st-best" id="fst-5">best match &#8722;$22.10</span>
+              </div>
+
+              <div class="hr"></div>
+              <div class="totrow"><span class="l">Total</span><span class="v" id="total">$129.40</span></div>
+              <div class="saved" id="saved">You saved $22.10</div>
+              <div class="checkout">Checkout</div>
+            </div>
+
+            <div class="panel" id="panel">
+              <div class="beak"></div>
+              <div class="phead">
+                <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                  <path d="M6 10.5h17l-1.8 16.2a3 3 0 0 1-3 2.65H10.8a3 3 0 0 1-3-2.65L6 10.5Z" stroke="#0b0b0f" stroke-width="2" stroke-linejoin="round" />
+                  <path d="M11.5 10.5V8.2A4.2 4.2 0 0 1 15.7 4a4.2 4.2 0 0 1 4.2 4.2v2.3" stroke="#0b0b0f" stroke-width="2" stroke-linecap="round" />
+                  <rect x="14" y="17" width="7.2" height="7.2" rx="1.4" fill="#495BF6" />
+                </svg>
+                <div class="t">Coupon <em>AI Assistant</em></div>
+              </div>
+
+              <div class="pstate">
+                <div class="st st1" id="st1">
+                  <div class="lbl">01 / IDLE</div>
+                  <div class="big">12 coupons <em>found</em></div>
+                  <div class="body-t">Let us gently apply coupon codes for your cart and find an extra discount or free delivery.</div>
+                  <div class="cta" id="ext-cta">Apply coupons</div>
+                </div>
+
+                <div class="st st2" id="st2">
+                  <div class="lbl">02 / TESTING</div>
+                  <div class="big">Testing coupons&#8230;</div>
+                  <div class="chipwrap">
+                    <span class="chip" id="chip-0">+ SAVE10</span>
+                    <span class="chip" id="chip-1">+ CODE7</span>
+                    <span class="chip" id="chip-2">+ FRESH22</span>
+                    <span class="chip" id="chip-3">+ FALL26</span>
+                    <span class="chip" id="chip-4">+ BACK26</span>
+                    <span class="chip" id="chip-5">+ MEMBER15</span>
+                  </div>
+                  <div class="prog">
+                    <div class="progrow"><span>Code <b id="codeNum">1</b> of 12</span><span id="pct">8%</span></div>
+                    <div class="track"><span class="fill" id="fill"></span></div>
+                  </div>
+                </div>
+
+                <div class="st st3" id="st3">
+                  <div class="lbl">03 / SUCCESS</div>
+                  <div class="big">Success<em>.</em></div>
+                  <div class="kvs">
+                    <div class="kv"><span class="k">Cart total</span><span class="v">$107.30</span></div>
+                    <div class="kv"><span class="k">You saved</span><span class="v i">$22.10</span></div>
+                    <div class="kv"><span class="k">With code</span><span class="v">MEMBER15</span></div>
+                  </div>
+                  <div class="cta">Continue to checkout</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cursor" id="cursor">
+          <svg width="46" height="61" viewBox="0 0 46 61" aria-hidden="true">
+            <path d="M5 3 L5 47 L16.5 36.5 L24 53 L33 49 L25.6 32.8 L40 32.8 Z" fill="#0b0b0f" stroke="#ffffff" stroke-width="3.4" stroke-linejoin="round" />
+          </svg>
+        </div>
+
+        <div class="fade" id="fade"></div>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      const T_TEST = 3.2;
+      const D_TEST = 5.4;
+      const STEP = D_TEST / 6;
+      const T_WIN = T_TEST + D_TEST; // 8.6
+
+      // 0. вход из белого
+      tl.fromTo('#fade', { opacity: 1 }, { opacity: 0, duration: 0.4, ease: 'power2.out' }, 0);
+
+      // 1. иконка расширения подмигивает
+      tl.to('#extbtn', { scale: 1.16, duration: 0.22, ease: 'power2.inOut', yoyo: true, repeat: 3 }, 0.5);
+
+      // 2. панель выезжает
+      tl.from('#panel', { opacity: 0, y: -26, duration: 0.5, ease: 'power3.out' }, 1.0);
+
+      // 3. курсор идёт к кнопке и жмёт
+      tl.to('#cursor', { x: 19, y: -397, duration: 0.95, ease: 'power2.inOut' }, 1.65);
+      tl.to('#ext-cta', { scale: 0.955, duration: 0.12, ease: 'power2.out' }, 2.66);
+      tl.to('#ext-cta', { scale: 1, duration: 0.18, ease: 'power2.out' }, 2.78);
+      tl.to('#cursor', { x: 76, y: -272, duration: 0.55, ease: 'power2.inOut' }, 3.05);
+
+      // 4. IDLE -> TESTING
+      tl.to('#st1', { autoAlpha: 0, duration: 0.22, ease: 'power2.out' }, 2.92);
+      tl.to('#st2', { autoAlpha: 1, duration: 0.26, ease: 'power2.out' }, 3.06);
+
+      // 5. перебор кодов
+      tl.to('#ph', { autoAlpha: 0, duration: 0.15 }, T_TEST);
+      for (let i = 0; i < 6; i++) {
+        const t0 = T_TEST + i * STEP;
+        tl.to('#chip-' + i, { autoAlpha: 1, duration: 0.16, ease: 'power2.out' }, t0);
+        tl.to('#fcode-' + i, { autoAlpha: 1, duration: 0.16, ease: 'power2.out' }, t0 + 0.05);
+        tl.to('#fst-' + i, { autoAlpha: 1, duration: 0.16, ease: 'power2.out' }, t0 + 0.32);
+        if (i < 5) {
+          tl.to(['#chip-' + i, '#fcode-' + i, '#fst-' + i], { autoAlpha: 0, duration: 0.14, ease: 'power2.in' }, t0 + STEP - 0.16);
+        }
+      }
+
+      tl.to('#fill', { scaleX: 1, duration: D_TEST, ease: 'none' }, T_TEST);
+      const pc = { v: 8 };
+      tl.to(pc, { v: 100, duration: D_TEST, ease: 'none',
+        onUpdate: () => { document.getElementById('pct').textContent = Math.round(pc.v) + '%'; } }, T_TEST);
+      const cn = { v: 1 };
+      tl.to(cn, { v: 12, duration: D_TEST, ease: 'none',
+        onUpdate: () => { document.getElementById('codeNum').textContent = Math.round(cn.v); } }, T_TEST);
+
+      // 6. TESTING -> SUCCESS
+      tl.to('#st2', { autoAlpha: 0, duration: 0.24, ease: 'power2.out' }, T_WIN);
+      tl.to('#st3', { autoAlpha: 1, duration: 0.3, ease: 'power2.out' }, T_WIN + 0.16);
+
+      // 6a. сумма живёт во время перебора: код применяется, цена меняется, код снимается
+      const tv = { v: 129.4 };
+      const totalEl = document.getElementById('total');
+      const onTot = () => { totalEl.textContent = '$' + tv.v.toFixed(2); };
+      tl.to(tv, { v: 121.2, duration: 0.25, ease: 'power2.out', onUpdate: onTot }, T_TEST + 1 * STEP + 0.34);
+      tl.to(tv, { v: 129.4, duration: 0.2, ease: 'power2.in', onUpdate: onTot }, T_TEST + 2 * STEP - 0.3);
+      tl.to(tv, { v: 111.0, duration: 0.25, ease: 'power2.out', onUpdate: onTot }, T_TEST + 3 * STEP + 0.34);
+      tl.to(tv, { v: 129.4, duration: 0.2, ease: 'power2.in', onUpdate: onTot }, T_TEST + 4 * STEP - 0.3);
+
+      // 7. финал: победитель применяется по-настоящему
+      tl.to(tv, { v: 107.3, duration: 0.9, ease: 'power2.inOut', onUpdate: onTot }, T_WIN + 0.3);
+      tl.to('#total', { color: '#15803d', duration: 0.35, ease: 'power2.out' }, T_WIN + 0.3);
+      tl.fromTo('#saved', { scale: 0.72 }, { scale: 1, duration: 0.44, ease: 'back.out(2.2)' }, T_WIN + 0.8);
+      tl.to('#saved', { autoAlpha: 1, duration: 0.28, ease: 'power2.out' }, T_WIN + 0.8);
+
+      // 8. выход в белое — чистый луп
+      tl.to('#fade', { opacity: 1, duration: 0.5, ease: 'power2.in' }, 13.5);
+
+      window.__timelines['main'] = tl;
+    </script>
+  </body>
+</html>

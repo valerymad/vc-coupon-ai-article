@@ -1,0 +1,14 @@
+.DS_Store
+node_modules/
+
+# старые версии текста, живут только локально
+article_v1.md
+article_v1_edit_Val.md
+out/README.md
+
+# генерируется: preview/build_pdf.py, hyperframes snapshot/render
+preview/*.html
+preview/*.pdf
+preview/video-poster.jpg
+*/snapshots/
+*/renders/
